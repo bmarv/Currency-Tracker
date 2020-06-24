@@ -7,7 +7,19 @@ import CurrCard from './components/CurrCard/CurrCard'
 import CurrGraph from './components/CurrGraph/CurrGraph'
 import Footer from './components/Footer/Footer'
 
+import {fetchCurrencies} from './api/index'
+
 class App extends React.Component{
+    state = {
+        data: {},
+    }
+    
+    componentDidMount(){
+        document.title = "Currency Tracker"
+        const fetchedCurrencies = fetchCurrencies()
+        this.setState({data:fetchedCurrencies})
+    }
+
     render(){
         return(
             <div>
