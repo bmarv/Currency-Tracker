@@ -15,18 +15,18 @@ const CurrCard = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography color="h1">
+                                <Typography color="textPrimary">
                                     NR
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography color="h2">
+                                <Typography color="secondary">
                                     %
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography color="h5">
-                                    yesterday
+                                <Typography color="textPrimary">
+                                    current Date
                                 </Typography>
                             </Grid>
                         </Grid>

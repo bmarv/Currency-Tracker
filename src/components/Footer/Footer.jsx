@@ -9,7 +9,7 @@ const styles ={
 
 const Footer = () => {
     return(
-        <footer class="myFooter" style={styles.footer}>
+        <footer className="myFooter" style={styles.footer}>
             <p>Some footer nonesense</p>
         </footer>
     )

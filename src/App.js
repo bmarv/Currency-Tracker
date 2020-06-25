@@ -16,7 +16,7 @@ class App extends React.Component{
     
     componentDidMount(){
         document.title = "Currency Tracker"
-        const fetchedCurrencies = fetchCurrencies()
+        const fetchedCurrencies = fetchCurrencies("EUR")
         this.setState({data:fetchedCurrencies})
     }
 
@@ -25,25 +25,25 @@ class App extends React.Component{
             <div>
                 <NavBar />
                 <Grid container spacing={2}>
-                    <Grid item md={6} container>
-                        <Grid item xs={6} md={6} justify="center">
+                    <Grid item md={6} container justify="center" spacing={2}>
+                        <Grid item xs={6} md={6} >
                             <CurrencyPicker />
                         </Grid>
-                        <Grid item xs={6} md={6} justify="center">
+                        <Grid item xs={6} md={6} >
                             <CurrencyPicker />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={6} md={6}>
                             <CurrCard />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={6} md={6}>
                             <CurrCard />
                         </Grid>
                     </Grid>
-                    <Grid item md={6}>
+                    <Grid item xs={12} md={6}>
                         <CurrGraph />
                     </Grid>
                 </Grid>
-                <Footer />
+                {/* <Footer /> */}
             </div>  
         )
     }
