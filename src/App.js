@@ -11,11 +11,11 @@ import {fetchCurrencies} from './api/index'
 
 class App extends React.Component{
     state = {
-        base: "",
+        base: "EUR",
+        secondaryCurrency: "USD",
         currencies: [],
-        rates: {},
+        rates: [],
         date: "",
-        secondaryCurrency: "",
     }
     
     componentDidMount(){
@@ -25,11 +25,12 @@ class App extends React.Component{
             currencyList =data[Object.keys(data)[0]]
             dateValue = data[Object.keys(data)[2]]
             ratesList = data[Object.keys(data)[1]]
-        })
-        this.setState({
-            currencies:currencyList,
-            date: dateValue,
-            rates: ratesList
+            // console.log(Object.entries(ratesList))
+            this.setState({
+                currencies:currencyList,
+                date: dateValue,
+                rates: ratesList
+            })
         })
     }
 
@@ -37,15 +38,13 @@ class App extends React.Component{
     handlePrimaryCurrChange = async (currency) => {
         var dateValue, ratesList;
         fetchCurrencies(currency).then(data => {
-            // currencyList =data[Object.keys(data)[0]]
             dateValue = data[Object.keys(data)[2]]
             ratesList = data[Object.keys(data)[1]]
-        })
-        this.setState({
-            base: currency,
-            // currencies:currencyList,
-            date: dateValue,
-            rates: ratesList
+            this.setState({
+                base: currency,
+                date: dateValue,
+                rates: ratesList
+            })
         })
     }
 
@@ -56,22 +55,23 @@ class App extends React.Component{
     }
 
     render(){
+        const {base, secondaryCurrency, rates, date } = this.state
         return(
             <div>
                 <NavBar />
                 <Grid container spacing={2}>
                     <Grid item md={6} container justify="center" spacing={2}>
                         <Grid item xs={6} md={6} >
-                            <CurrencyPicker handleCurrChange={this.handlePrimaryCurrChange}/>
+                            <CurrencyPicker handleCurrChange={this.handlePrimaryCurrChange} currency={base}/>
                         </Grid>
                         <Grid item xs={6} md={6} >
-                            <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange}/>
+                            <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange} currency={secondaryCurrency}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
-                            <CurrCard />
+                            <CurrCard base={base} currency={base} rates={rates} date={date}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
-                            <CurrCard />
+                            <CurrCard base={base} currency={secondaryCurrency} rates={rates} date={date}/>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6}>

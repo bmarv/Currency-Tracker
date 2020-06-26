@@ -4,7 +4,7 @@ import {FormControl, NativeSelect} from '@material-ui/core'
 import styles from './CurrencyPicker.module.css'
 import {fetchCurrencies} from '../../api/index'
 
-const CurrencyPicker = ({handleCurrChange}) => {
+const CurrencyPicker = (props) => {
     const [fetchedData, setFetchedData]= useState([])
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const CurrencyPicker = ({handleCurrChange}) => {
     return(
         <div>
             <FormControl className={styles.formControl}>
-                <NativeSelect defaultValue="" onChange={(e) => handleCurrChange(e.target.value)}>
+                <NativeSelect value={props.currency} onChange={(e) => {props.handleCurrChange(e.target.value)}}>
                 {fetchedData.sort().map((currency, i) => <option key={i} value={currency}>{currency}</option>)}
                 </NativeSelect>
             </FormControl>
