@@ -5,19 +5,54 @@ import NavBar from './components/NavBar/NavBar'
 import CurrencyPicker from './components/CurrencyPicker/CurrencyPicker'
 import CurrCard from './components/CurrCard/CurrCard'
 import CurrGraph from './components/CurrGraph/CurrGraph'
-import Footer from './components/Footer/Footer'
+// import Footer from './components/Footer/Footer'
 
 import {fetchCurrencies} from './api/index'
 
 class App extends React.Component{
     state = {
-        data: {},
+        base: "",
+        currencies: [],
+        rates: {},
+        date: "",
+        secondaryCurrency: "",
     }
     
     componentDidMount(){
         document.title = "Currency Tracker"
-        const fetchedCurrencies = fetchCurrencies("EUR")
-        this.setState({data:fetchedCurrencies})
+        var currencyList, dateValue, ratesList;
+        fetchCurrencies().then(data => {
+            currencyList =data[Object.keys(data)[0]]
+            dateValue = data[Object.keys(data)[2]]
+            ratesList = data[Object.keys(data)[1]]
+        })
+        this.setState({
+            currencies:currencyList,
+            date: dateValue,
+            rates: ratesList
+        })
+    }
+
+
+    handlePrimaryCurrChange = async (currency) => {
+        var dateValue, ratesList;
+        fetchCurrencies(currency).then(data => {
+            // currencyList =data[Object.keys(data)[0]]
+            dateValue = data[Object.keys(data)[2]]
+            ratesList = data[Object.keys(data)[1]]
+        })
+        this.setState({
+            base: currency,
+            // currencies:currencyList,
+            date: dateValue,
+            rates: ratesList
+        })
+    }
+
+    handleSecondaryCurrChange = async (secCurrency) => {
+        this.setState({
+            secondaryCurrency: secCurrency,
+        })
     }
 
     render(){
@@ -27,10 +62,10 @@ class App extends React.Component{
                 <Grid container spacing={2}>
                     <Grid item md={6} container justify="center" spacing={2}>
                         <Grid item xs={6} md={6} >
-                            <CurrencyPicker />
+                            <CurrencyPicker handleCurrChange={this.handlePrimaryCurrChange}/>
                         </Grid>
                         <Grid item xs={6} md={6} >
-                            <CurrencyPicker />
+                            <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
                             <CurrCard />

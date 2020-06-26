@@ -7,16 +7,24 @@ export const fetchCurrencies = async (selectedCurr) =>{
     selectedCurr 
         ? (currUrl=url+"base="+selectedCurr)
         : currUrl=url
-    console.log(currUrl)
+    // console.log(currUrl)
     try {
         const {data: {base, rates, date}} = await axios.get(currUrl)
-        var currencies = new Array()
-        currencies = Object.keys(rates).sort()
-        console.log(currencies, rates, date)
-        return [currencies, rates, date]
+        var currencies = []
+        currencies = Object.keys(rates) 
+        !selectedCurr
+            ? currencies.push(base)
+            : 
+        currencies.sort()
+
+        // console.log(Object.entries(rates))
+        return {currencies, rates, date}
     } catch (error) {
         console.log(error)
     }
-    return currencies
+    // return currencies
 }
 
+// export const add = (a,b) => {
+//     return a+b
+// }
