@@ -31,3 +31,9 @@ test('hist: month first rate is correct', () => {
         expect(data[Object.keys(data)[0]].rate).toBe(0.6195704717)
     })
 })
+
+test('percent of US: 29./30.06.', () => {
+    return fetchAPI.currencyPercentage('2020-06-30','EUR', 'USD').then(data => {
+        expect(Number.parseFloat(data).toPrecision(3)).toBe("-0.762")
+    })
+})

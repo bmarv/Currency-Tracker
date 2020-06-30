@@ -7,12 +7,13 @@ import CurrCard from './components/CurrCard/CurrCard'
 import CurrGraph from './components/CurrGraph/CurrGraph'
 // import Footer from './components/Footer/Footer'
 
-import {fetchCurrencies, histMonthData} from './api/index'
+import {fetchCurrencies, histMonthData, currencyPercentage} from './api/index'
 
 class App extends React.Component{
     state = {
         base: "EUR",
         secondaryCurrency: "USD",
+        secondaryPercentage:null,
         currencies: [],
         rates: [],
         date: "",
@@ -37,6 +38,13 @@ class App extends React.Component{
                 this.setState({
                     graphData: graphValue
                 })
+                currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
+                    if(typeof data == "number"){
+                        this.setState({secondaryPercentage: data
+                        })
+                    }
+                })
+            
             })
         })
     }
@@ -52,6 +60,13 @@ class App extends React.Component{
                 date: dateValue,
                 rates: ratesList
             })
+            var secCurrency= this.state.secondaryCurrency
+            histMonthData(this.state.date, this.state.base,secCurrency).then(data => {
+                var graphValue = data
+                this.setState({
+                    graphData: graphValue
+                })
+            })
         })
     }
 
@@ -64,11 +79,17 @@ class App extends React.Component{
             this.setState({
                 graphData: graphValue
             })
+            currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
+                if(typeof data == "number"){
+                    this.setState({secondaryPercentage: data
+                    })
+                }
+            })
         })
     }
 
     render(){
-        const {base, secondaryCurrency, rates, date, graphData } = this.state
+        const {base, secondaryCurrency, secondaryPercentage, rates, date, graphData } = this.state
         return(
             <div>
                 <NavBar />
@@ -84,7 +105,7 @@ class App extends React.Component{
                             <CurrCard base={base} currency={base} rates={rates} date={date}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
-                            <CurrCard base={base} currency={secondaryCurrency} rates={rates} date={date}/>
+                            <CurrCard base={base} currency={secondaryCurrency} percentage={secondaryPercentage} rates={rates} date={date}/>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6}>

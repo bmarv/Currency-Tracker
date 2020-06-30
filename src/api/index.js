@@ -28,7 +28,7 @@ export const fetchCurrencies = async (selectedCurr) =>{
 export const fetchHistoricalCurr =async (dateUser, baseUser, secCurrUser) =>{
     let currUrl = 'https://api.ratesapi.io/api/'+dateUser+'?base='+baseUser+'&symbols='+secCurrUser
     try{
-        const {data: {base, rates, date}} = await axios.get(currUrl)
+        const {data: {rates}} = await axios.get(currUrl)
         return rates[Object.keys(rates)[0]]
     } catch(error){
         console.log(error)
@@ -49,4 +49,19 @@ export const histMonthData = async (date, base, secCurr)=>{
         currDate.setDate(currDate.getDate()-1)
     }
     return dailyData
+}
+
+export const currencyPercentage = async(percDate, percBase, percSecCurr)=> {
+    // todays value
+    var currDate = new Date(percDate)
+    var {data: {rates}} = await axios.get(url)
+    var secTodaysValue = rates[percSecCurr]
+    // yesterdays value
+    var yesterday = new Date(currDate.setDate(currDate.getDate()-1))
+    var loadDate = yesterday.getFullYear()+'-'+(yesterday.getMonth()+1)+'-'+yesterday.getDate()
+    var currUrl = 'https://api.ratesapi.io/api/'+loadDate+'?base='+percBase
+    var {data: {rates}}= await axios.get(currUrl)
+    var secYesterdaysValue = rates[percSecCurr]
+    var percentage = ((secTodaysValue/secYesterdaysValue)-1)*100
+    return percentage
 }
