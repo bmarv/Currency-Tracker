@@ -7,7 +7,7 @@ import CurrCard from './components/CurrCard/CurrCard'
 import CurrGraph from './components/CurrGraph/CurrGraph'
 // import Footer from './components/Footer/Footer'
 
-import {fetchCurrencies} from './api/index'
+import {fetchCurrencies, histMonthData} from './api/index'
 
 class App extends React.Component{
     state = {
@@ -16,6 +16,7 @@ class App extends React.Component{
         currencies: [],
         rates: [],
         date: "",
+        graphData:{},
     }
     
     componentDidMount(){
@@ -25,11 +26,17 @@ class App extends React.Component{
             currencyList =data[Object.keys(data)[0]]
             dateValue = data[Object.keys(data)[2]]
             ratesList = data[Object.keys(data)[1]]
-            // console.log(Object.entries(ratesList))
             this.setState({
                 currencies:currencyList,
                 date: dateValue,
                 rates: ratesList
+            })
+            var secCurrency= this.state.secondaryCurrency
+            histMonthData(this.state.date, this.state.base,secCurrency).then(data => {
+                var graphValue = data
+                this.setState({
+                    graphData: graphValue
+                })
             })
         })
     }
@@ -52,10 +59,16 @@ class App extends React.Component{
         this.setState({
             secondaryCurrency: secCurrency,
         })
+        histMonthData(this.state.date, this.state.base, secCurrency).then(data => {
+            var graphValue = data
+            this.setState({
+                graphData: graphValue
+            })
+        })
     }
 
     render(){
-        const {base, secondaryCurrency, rates, date } = this.state
+        const {base, secondaryCurrency, rates, date, graphData } = this.state
         return(
             <div>
                 <NavBar />
@@ -75,7 +88,7 @@ class App extends React.Component{
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <CurrGraph />
+                        <CurrGraph data={graphData} secondaryCurrency={secondaryCurrency}/>
                     </Grid>
                 </Grid>
                 {/* <Footer /> */}
