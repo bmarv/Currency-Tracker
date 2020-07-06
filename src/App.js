@@ -33,18 +33,17 @@ class App extends React.Component{
                 rates: ratesList
             })
             var secCurrency= this.state.secondaryCurrency
-            histMonthData(this.state.date, this.state.base,secCurrency).then(data => {
-                var graphValue = data
-                this.setState({
-                    graphData: graphValue
+            currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
+                if(typeof data == "number"){
+                    this.setState({secondaryPercentage: data
+                    })
+                }
+                histMonthData(this.state.date, this.state.base,secCurrency).then(data => {
+                    var graphValue = data
+                    this.setState({
+                        graphData: graphValue
+                    })
                 })
-                currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
-                    if(typeof data == "number"){
-                        this.setState({secondaryPercentage: data
-                        })
-                    }
-                })
-            
             })
         })
     }
@@ -61,10 +60,16 @@ class App extends React.Component{
                 rates: ratesList
             })
             var secCurrency= this.state.secondaryCurrency
-            histMonthData(this.state.date, this.state.base,secCurrency).then(data => {
-                var graphValue = data
-                this.setState({
-                    graphData: graphValue
+            currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
+                if(typeof data == "number"){
+                    this.setState({secondaryPercentage: data
+                    })
+                }
+                histMonthData(this.state.date, this.state.base,secCurrency).then(data => {
+                    var graphValue = data
+                    this.setState({
+                        graphData: graphValue
+                    })
                 })
             })
         })
@@ -74,16 +79,16 @@ class App extends React.Component{
         this.setState({
             secondaryCurrency: secCurrency,
         })
-        histMonthData(this.state.date, this.state.base, secCurrency).then(data => {
-            var graphValue = data
-            this.setState({
-                graphData: graphValue
-            })
-            currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
-                if(typeof data == "number"){
-                    this.setState({secondaryPercentage: data
-                    })
-                }
+        currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
+            if(typeof data == "number"){
+                this.setState({secondaryPercentage: data
+                })
+            }
+            histMonthData(this.state.date, this.state.base, secCurrency).then(data => {
+                var graphValue = data
+                this.setState({
+                    graphData: graphValue
+                })
             })
         })
     }
@@ -107,6 +112,12 @@ class App extends React.Component{
                         <Grid item xs={6} md={6}>
                             <CurrCard base={base} currency={secondaryCurrency} percentage={secondaryPercentage} rates={rates} date={date}/>
                         </Grid>
+                        {/* <Grid item xs={6} md={6} >
+                            <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange} currency={secondaryCurrency}/>
+                        </Grid>
+                        <Grid item xs={6} md={6}>
+                            <CurrCard base={base} currency={secondaryCurrency} percentage={secondaryPercentage} rates={rates} date={date}/>
+                        </Grid> */}
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <CurrGraph data={graphData} secondaryCurrency={secondaryCurrency}/>

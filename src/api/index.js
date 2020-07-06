@@ -52,17 +52,20 @@ export const histMonthData = async (date, base, secCurr)=>{
 }
 
 export const currencyPercentage = async(percDate, percBase, percSecCurr)=> {
-    // todays value
-    var currDate = new Date(percDate)
-    var rates = await callRates(url)
-    var secTodaysValue = rates[percSecCurr]
-    // yesterdays value
-    var yesterday = new Date(currDate.setDate(currDate.getDate()-1))
-    var loadDate = yesterday.getFullYear()+'-'+(yesterday.getMonth()+1)+'-'+yesterday.getDate()
-    var currUrl = 'https://api.ratesapi.io/api/'+loadDate+'?base='+percBase
-    rates = await callRates(currUrl)
-    var secYesterdaysValue = rates[percSecCurr]
-    var percentage = ((secTodaysValue/secYesterdaysValue)-1)*100
+    var percentage= 0
+    if(percBase!==percSecCurr){
+        // todays value
+        var currDate = new Date(percDate)
+        var rates = await callRates(url)
+        var secTodaysValue = rates[percSecCurr]
+        // yesterdays value
+        var yesterday = new Date(currDate.setDate(currDate.getDate()-1))
+        var loadDate = yesterday.getFullYear()+'-'+(yesterday.getMonth()+1)+'-'+yesterday.getDate()
+        var currUrl = 'https://api.ratesapi.io/api/'+loadDate+'?base='+percBase
+        rates = await callRates(currUrl)
+        var secYesterdaysValue = rates[percSecCurr]
+        percentage = ((secTodaysValue/secYesterdaysValue)-1)*100
+    }
     return percentage
 }
 
