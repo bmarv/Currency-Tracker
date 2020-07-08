@@ -12,12 +12,12 @@ import {fetchCurrencies, histMonthData, currencyPercentage} from './api/index'
 class App extends React.Component{
     state = {
         base: "EUR",
-        secondaryCurrency: "USD",
-        secondaryPercentage:null,
+        secondaryCurrencies: ["USD"],
+        secondaryPercentage:[null],
         currencies: [],
         rates: [],
         date: "",
-        graphData:{},
+        graphData:[{}],
     }
     
     componentDidMount(){
@@ -32,16 +32,16 @@ class App extends React.Component{
                 date: dateValue,
                 rates: ratesList
             })
-            var secCurrency= this.state.secondaryCurrency
+            var secCurrency= this.state.secondaryCurrencies[0]
             currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
                 if(typeof data == "number"){
-                    this.setState({secondaryPercentage: data
+                    this.setState({secondaryPercentage: [data]
                     })
                 }
                 histMonthData(this.state.date, this.state.base,secCurrency).then(data => {
                     var graphValue = data
                     this.setState({
-                        graphData: graphValue
+                        graphData: [graphValue]
                     })
                 })
             })
@@ -61,16 +61,16 @@ class App extends React.Component{
             })
             var dateCurr = this.state.date
             var baseCurrency = this.state.base
-            var secCurrency= this.state.secondaryCurrency
+            var secCurrency= this.state.secondaryCurrencies[0]
             currencyPercentage(dateCurr, baseCurrency, secCurrency).then(data =>{
                 if(typeof data == "number"){
-                    this.setState({secondaryPercentage: data
+                    this.setState({secondaryPercentage: [data]
                     })
                 }
                 histMonthData(dateCurr, baseCurrency, secCurrency).then(data => {
                     var graphValue = data
                     this.setState({
-                        graphData: graphValue
+                        graphData: [graphValue]
                     })
                 })
             })
@@ -79,24 +79,24 @@ class App extends React.Component{
 
     handleSecondaryCurrChange = async (secCurrency) => {
         this.setState({
-            secondaryCurrency: secCurrency,
+            secondaryCurrencies: [secCurrency],
         })
         currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
             if(typeof data == "number"){
-                this.setState({secondaryPercentage: data
+                this.setState({secondaryPercentage: [data]
                 })
             }
             histMonthData(this.state.date, this.state.base, secCurrency).then(data => {
                 var graphValue = data
                 this.setState({
-                    graphData: graphValue
+                    graphData: [graphValue]
                 })
             })
         })
     }
 
     render(){
-        const {base, secondaryCurrency, secondaryPercentage, rates, date, graphData } = this.state
+        const {base, secondaryCurrencies, secondaryPercentage, rates, date, graphData } = this.state
         return(
             <div>
                 <NavBar />
@@ -106,23 +106,17 @@ class App extends React.Component{
                             <CurrencyPicker handleCurrChange={this.handlePrimaryCurrChange} currency={base}/>
                         </Grid>
                         <Grid item xs={6} md={6} >
-                            <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange} currency={secondaryCurrency}/>
+                            <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange} currency={secondaryCurrencies[0]}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
                             <CurrCard base={base} currency={base} rates={rates} date={date}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
-                            <CurrCard base={base} currency={secondaryCurrency} percentage={secondaryPercentage} rates={rates} date={date}/>
+                            <CurrCard base={base} currency={secondaryCurrencies[0]} percentage={secondaryPercentage[0]} rates={rates} date={date}/>
                         </Grid>
-                        {/* <Grid item xs={6} md={6} >
-                            <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange} currency={secondaryCurrency}/>
-                        </Grid>
-                        <Grid item xs={6} md={6}>
-                            <CurrCard base={base} currency={secondaryCurrency} percentage={secondaryPercentage} rates={rates} date={date}/>
-                        </Grid> */}
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <CurrGraph data={graphData} secondaryCurrency={secondaryCurrency}/>
+                        <CurrGraph data={graphData[0]} secondaryCurrency={secondaryCurrencies[0]}/>
                     </Grid>
                 </Grid>
                 {/* <Footer /> */}
