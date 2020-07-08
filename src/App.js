@@ -59,13 +59,15 @@ class App extends React.Component{
                 date: dateValue,
                 rates: ratesList
             })
+            var dateCurr = this.state.date
+            var baseCurrency = this.state.base
             var secCurrency= this.state.secondaryCurrency
-            currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
+            currencyPercentage(dateCurr, baseCurrency, secCurrency).then(data =>{
                 if(typeof data == "number"){
                     this.setState({secondaryPercentage: data
                     })
                 }
-                histMonthData(this.state.date, this.state.base,secCurrency).then(data => {
+                histMonthData(dateCurr, baseCurrency, secCurrency).then(data => {
                     var graphValue = data
                     this.setState({
                         graphData: graphValue
