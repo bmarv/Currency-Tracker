@@ -1,6 +1,8 @@
 # Currency Tracker
 
-_build with ReactJS_
+A live version can be found here [here](https://currency-tracker.netlify.app/).
+
+_build with ReactJS._
 
 ## Overview
 
