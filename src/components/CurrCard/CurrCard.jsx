@@ -1,5 +1,5 @@
 import React from 'react'
-import {Card, CardContent, Typography, Grid} from '@material-ui/core'
+import {Card, CardContent, Typography, Grid, TextField} from '@material-ui/core'
 import CountUp from 'react-countup'
 
 const CurrCard = (props) => {
@@ -8,7 +8,6 @@ const CurrCard = (props) => {
         return 'Please choose a Currency'
     }
 
-    
     return (
         <div>
             <Grid container spacing={2}>
@@ -35,6 +34,16 @@ const CurrCard = (props) => {
                                         }
                                 </Typography>
                             </Grid>
+                            {/* text input only numerical values
+                             */}
+                             <Grid item xs={12}>
+                                <TextField id="standard-textarea" type="number" variant="filled" size="small" fullWidth
+                                    onChange={(e) => {props.converter(props.currency, e.target.value)}}
+                                    value={props.convertedValue
+                                            ? props.convertedValue
+                                            : ""}
+                                />
+                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <Typography color="secondary">
                                     {props.percentage
@@ -42,7 +51,7 @@ const CurrCard = (props) => {
                                             (props.percentage>0)
                                             ?(<CountUp
                                                 start={0}
-                                                end={Number.parseFloat(props.percentage).toPrecision(3)}
+                                                end={Number(Number.parseFloat(props.percentage).toPrecision(3))}
                                                 duration={2.5}
                                                 separator=" "
                                                 decimals={4}

@@ -18,6 +18,8 @@ class App extends React.Component{
         rates: [],
         date: "",
         graphData:[{}],
+        convertedPrimValue: null,
+        convertedSecValue: null,
     }
     
     componentDidMount(){
@@ -95,8 +97,38 @@ class App extends React.Component{
         })
     }
 
+
+    converter = (currency,numberInput) => {
+        if(isFinite(numberInput)){
+            var convertedNumber =0
+            var base = this.state.base
+            var rates = this.state.rates
+            var secondaryCurrency = this.state.secondaryCurrencies[0]
+            if(currency===base){
+                // console.log("rate"+this.state.rates)
+                convertedNumber = numberInput * rates[secondaryCurrency]
+                this.setState({
+                    convertedSecValue: convertedNumber,
+                    convertedPrimValue: numberInput
+                })
+            }
+            else if(currency!==base){
+                convertedNumber = numberInput * (100/(rates[currency]*100))
+                this.setState({
+                    convertedPrimValue: convertedNumber,
+                    convertedSecValue: numberInput
+                })
+                // console.log(convertedNumber)
+            }
+            return convertedNumber
+        }   
+        else{
+            console.log("numberInput is not a Number")
+        }
+    }
+
     render(){
-        const {base, secondaryCurrencies, secondaryPercentage, rates, date, graphData } = this.state
+        const {base, secondaryCurrencies, secondaryPercentage, rates, date, graphData, convertedPrimValue, convertedSecValue} = this.state
         return(
             <div>
                 <NavBar />
@@ -109,10 +141,10 @@ class App extends React.Component{
                             <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange} currency={secondaryCurrencies[0]}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
-                            <CurrCard base={base} currency={base} rates={rates} date={date}/>
+                            <CurrCard base={base} currency={base} rates={rates} date={date} converter={this.converter} convertedValue={convertedPrimValue}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
-                            <CurrCard base={base} currency={secondaryCurrencies[0]} percentage={secondaryPercentage[0]} rates={rates} date={date}/>
+                            <CurrCard base={base} currency={secondaryCurrencies[0]} percentage={secondaryPercentage[0]} rates={rates} date={date} converter={this.converter} convertedValue={convertedSecValue}/>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6}>

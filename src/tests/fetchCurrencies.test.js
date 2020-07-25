@@ -1,3 +1,4 @@
+import App from '../App'
 const fetchAPI = require('../api/index')
 
 
@@ -42,7 +43,6 @@ var todayval, yesterdayval
 test('callRates: (todays value AUD-INR)', () => {
     return fetchAPI.callRates('https://api.ratesapi.io/api/2020-07-07?base=AUD').then(data => {
         todayval=data['INR']
-        console.log(todayval)
         expect(Number.parseFloat(data['INR']).toPrecision(3)).toBe('51.9')
     })
 })
