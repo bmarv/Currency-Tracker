@@ -29,7 +29,7 @@ export const fetchHistoricalCurr =async (dateUser, baseUser, secCurrUser) =>{
     let currUrl = 'https://api.ratesapi.io/api/'+dateUser+'?base='+baseUser+'&symbols='+secCurrUser
     try{
         const {data: {rates}} = await axios.get(currUrl)
-        return rates[Object.keys(rates)[0]]
+        return rates
     } catch(error){
         console.log(error)
     }
@@ -39,16 +39,31 @@ export const fetchHistoricalCurr =async (dateUser, baseUser, secCurrUser) =>{
  * fetch daily data for a month
  */
 export const histMonthData = async (date, base, secCurr)=>{
+    // additional currencies for comparison
+    var addCurr = ["USD","EUR","JPY","GBP"]
+    for (var curr in addCurr){
+        if(addCurr[curr] !== base){
+            secCurr = secCurr+","+addCurr[curr]
+        }
+    }
+    var monthlyData = {}
     let currDate = new Date(date)
-    var dailyData = {}
-    var currRate, loadDate
+    var currRates, loadDate
     for(let i=0;i<30;i++){
         loadDate = currDate.getFullYear()+'-'+(currDate.getMonth()+1)+'-'+currDate.getDate()
-        currRate = await fetchHistoricalCurr(loadDate, base, secCurr)
-        dailyData[Object.keys(dailyData).length] = {histDate: loadDate, rate: currRate}
+        currRates = await fetchHistoricalCurr(loadDate, base, secCurr)
+        // map data for currency
+        for (curr in currRates){
+            if (monthlyData[curr]=== undefined){
+                monthlyData[curr]={}
+                monthlyData[curr][0] = {histDate: loadDate, rate: currRates[curr]}
+            }   else{
+                monthlyData[curr][Object.keys(monthlyData[curr]).length] = {histDate: loadDate, rate: currRates[curr]}
+            }
+        }
         currDate.setDate(currDate.getDate()-1)
     }
-    return dailyData
+    return monthlyData
 }
 
 /**

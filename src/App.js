@@ -17,7 +17,7 @@ class App extends React.Component{
         currencies: [],
         rates: [],
         date: "",
-        graphData:[{}],
+        graphData:{},
         convertedPrimValue: null,
         convertedSecValue: null,
     }
@@ -43,7 +43,7 @@ class App extends React.Component{
                 histMonthData(this.state.date, this.state.base,secCurrency).then(data => {
                     var graphValue = data
                     this.setState({
-                        graphData: [graphValue]
+                        graphData: graphValue
                     })
                 })
             })
@@ -81,7 +81,7 @@ class App extends React.Component{
                 histMonthData(dateCurr, baseCurrency, secCurrency).then(data => {
                     var graphValue = data
                     this.setState({
-                        graphData: [graphValue]
+                        graphData: graphValue
                     })
                 })
             })
@@ -110,7 +110,7 @@ class App extends React.Component{
             histMonthData(this.state.date, this.state.base, secCurrency).then(data => {
                 var graphValue = data
                 this.setState({
-                    graphData: [graphValue]
+                    graphData: graphValue
                 })
             })
         })
@@ -170,7 +170,7 @@ class App extends React.Component{
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <CurrGraph data={graphData[0]} secondaryCurrency={secondaryCurrencies[0]}/>
+                        <CurrGraph data={graphData} secondaryCurrency={secondaryCurrencies[0]}/>
                     </Grid>
                 </Grid>
                 {/* <Footer /> */}
