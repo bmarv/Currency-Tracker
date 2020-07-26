@@ -38,7 +38,7 @@ const CurrCard = (props) => {
                              */}
                              <Grid item xs={12}>
                                 <TextField id="standard-textarea" type="number" variant="filled" size="small" fullWidth
-                                    onChange={(e) => {props.converter(props.currency, e.target.value)}}
+                                    onChange={(e) => {props.converter(props.currency, props.base, props.secCurrency, e.target.value)}}
                                     value={props.convertedValue
                                             ? props.convertedValue
                                             : ""}

@@ -61,14 +61,23 @@ class App extends React.Component{
                 date: dateValue,
                 rates: ratesList
             })
+        
+            // update secondary converted number
+            var secValue = this.state.convertedSecValue
+            var secCurrency = this.state.secondaryCurrencies[0]
+            this.setState({
+                convertedPrimValue: this.converter(secCurrency, currency, secCurrency, secValue),
+            })
+            
+            // update currency percentage
             var dateCurr = this.state.date
             var baseCurrency = this.state.base
-            var secCurrency= this.state.secondaryCurrencies[0]
             currencyPercentage(dateCurr, baseCurrency, secCurrency).then(data =>{
                 if(typeof data == "number"){
                     this.setState({secondaryPercentage: [data]
                     })
                 }
+                // update historical month data
                 histMonthData(dateCurr, baseCurrency, secCurrency).then(data => {
                     var graphValue = data
                     this.setState({
@@ -83,11 +92,21 @@ class App extends React.Component{
         this.setState({
             secondaryCurrencies: [secCurrency],
         })
+        // update secondary converted number
+        var priValue = this.state.convertedPrimValue
+        var baseCurr = this.state.base
+        this.setState({
+            convertedSecValue: this.converter(baseCurr, baseCurr, secCurrency, priValue),
+        })
+
+        // update secondary percentage
         currencyPercentage(this.state.date, this.state.base, secCurrency).then(data =>{
             if(typeof data == "number"){
-                this.setState({secondaryPercentage: [data]
+                this.setState({
+                    secondaryPercentage: [data]
                 })
             }
+            // update historical month data
             histMonthData(this.state.date, this.state.base, secCurrency).then(data => {
                 var graphValue = data
                 this.setState({
@@ -97,28 +116,31 @@ class App extends React.Component{
         })
     }
 
-
-    converter = (currency,numberInput) => {
+    /**
+     * converts the numerical input of one currency dynamically to the other currency
+     * 
+     * @param {currency of the numerical input} currency 
+     * @param {base currency} baseCurrency 
+     * @param {secondary currency} secondaryCurrency 
+     * @param {numerical input} numberInput 
+     */
+    converter = (currency, baseCurrency, secondaryCurrency, numberInput) => {
         if(isFinite(numberInput)){
             var convertedNumber =0
-            var base = this.state.base
             var rates = this.state.rates
-            var secondaryCurrency = this.state.secondaryCurrencies[0]
-            if(currency===base){
-                // console.log("rate"+this.state.rates)
+            if(currency===baseCurrency){
                 convertedNumber = numberInput * rates[secondaryCurrency]
                 this.setState({
                     convertedSecValue: convertedNumber,
                     convertedPrimValue: numberInput
                 })
             }
-            else if(currency!==base){
+            else if(currency!==baseCurrency){
                 convertedNumber = numberInput * (100/(rates[currency]*100))
                 this.setState({
                     convertedPrimValue: convertedNumber,
                     convertedSecValue: numberInput
                 })
-                // console.log(convertedNumber)
             }
             return convertedNumber
         }   
@@ -141,10 +163,10 @@ class App extends React.Component{
                             <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange} currency={secondaryCurrencies[0]}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
-                            <CurrCard base={base} currency={base} rates={rates} date={date} converter={this.converter} convertedValue={convertedPrimValue}/>
+                            <CurrCard base={base} secCurrency={secondaryCurrencies[0]} currency={base} rates={rates} date={date} converter={this.converter} convertedValue={convertedPrimValue}/>
                         </Grid>
                         <Grid item xs={6} md={6}>
-                            <CurrCard base={base} currency={secondaryCurrencies[0]} percentage={secondaryPercentage[0]} rates={rates} date={date} converter={this.converter} convertedValue={convertedSecValue}/>
+                            <CurrCard base={base} secCurrency={secondaryCurrencies[0]} currency={secondaryCurrencies[0]} percentage={secondaryPercentage[0]} rates={rates} date={date} converter={this.converter} convertedValue={convertedSecValue}/>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={6}>
