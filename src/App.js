@@ -1,13 +1,14 @@
 import React from 'react'
-import {Grid} from '@material-ui/core'
+import {Grid, Typography, Paper} from '@material-ui/core'
 
 import NavBar from './components/NavBar/NavBar'
 import CurrencyPicker from './components/CurrencyPicker/CurrencyPicker'
 import CurrCard from './components/CurrCard/CurrCard'
 import CurrGraph from './components/CurrGraph/CurrGraph'
+
 // import Footer from './components/Footer/Footer'
 
-import {fetchCurrencies, histMonthData, currencyPercentage} from './api/index'
+import {fetchCurrencies, histMonthData, histYearData, hist10YearData, currencyPercentage} from './api/index'
 
 class App extends React.Component{
     state = {
@@ -18,6 +19,8 @@ class App extends React.Component{
         rates: [],
         date: "",
         graphData:{},
+        yearGraphData:{},
+        tenYearGraphData:{},
         convertedPrimValue: null,
         convertedSecValue: null,
     }
@@ -44,6 +47,18 @@ class App extends React.Component{
                     var graphValue = data
                     this.setState({
                         graphData: graphValue
+                    })
+                    histYearData(this.state.date, this.state.base, secCurrency).then(data => {
+                        var graphValue = data
+                        this.setState({
+                            yearGraphData: graphValue
+                        })
+                        hist10YearData(this.state.date, this.state.base, secCurrency).then(data => {
+                            var graphValue = data
+                            this.setState({
+                                tenYearGraphData: graphValue
+                            })
+                        })
                     })
                 })
             })
@@ -83,6 +98,18 @@ class App extends React.Component{
                     this.setState({
                         graphData: graphValue
                     })
+                    histYearData(dateCurr, baseCurrency, secCurrency).then(data => {
+                        var graphValue = data
+                        this.setState({
+                            yearGraphData: graphValue
+                        })
+                        hist10YearData(dateCurr, baseCurrency, secCurrency).then(data => {
+                            var graphValue = data
+                            this.setState({
+                                tenYearGraphData: graphValue
+                            })
+                        })
+                    })
                 })
             })
         })
@@ -111,6 +138,18 @@ class App extends React.Component{
                 var graphValue = data
                 this.setState({
                     graphData: graphValue
+                })
+                histYearData(this.state.date, this.state.base, secCurrency).then(data => {
+                    var graphValue = data
+                    this.setState({
+                        yearGraphData: graphValue
+                    })
+                    hist10YearData(this.state.date, this.state.base, secCurrency).then(data => {
+                        var graphValue = data
+                        this.setState({
+                            tenYearGraphData: graphValue
+                        })
+                    })
                 })
             })
         })
@@ -147,10 +186,10 @@ class App extends React.Component{
         else{
             console.log("numberInput is not a Number")
         }
-    }
+    }    
 
     render(){
-        const {base, secondaryCurrencies, secondaryPercentage, rates, date, graphData, convertedPrimValue, convertedSecValue} = this.state
+        const {base, secondaryCurrencies, secondaryPercentage, rates, date, graphData, yearGraphData, tenYearGraphData, convertedPrimValue, convertedSecValue} = this.state
         return(
             <div>
                 <NavBar />
@@ -158,19 +197,21 @@ class App extends React.Component{
                     <Grid item md={6} container justify="center" spacing={2}>
                         <Grid item xs={6} md={6} >
                             <CurrencyPicker handleCurrChange={this.handlePrimaryCurrChange} currency={base}/>
+                            <CurrCard base={base} secCurrency={secondaryCurrencies[0]} currency={base} rates={rates} date={date} converter={this.converter} convertedValue={convertedPrimValue}/>
                         </Grid>
                         <Grid item xs={6} md={6} >
                             <CurrencyPicker handleCurrChange={this.handleSecondaryCurrChange} currency={secondaryCurrencies[0]}/>
-                        </Grid>
-                        <Grid item xs={6} md={6}>
-                            <CurrCard base={base} secCurrency={secondaryCurrencies[0]} currency={base} rates={rates} date={date} converter={this.converter} convertedValue={convertedPrimValue}/>
-                        </Grid>
-                        <Grid item xs={6} md={6}>
                             <CurrCard base={base} secCurrency={secondaryCurrencies[0]} currency={secondaryCurrencies[0]} percentage={secondaryPercentage[0]} rates={rates} date={date} converter={this.converter} convertedValue={convertedSecValue}/>
                         </Grid>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={6} margin='[0,100]'>
+                        <Typography id="histData" align="center" variant="h5">Historical Data</Typography>
+                        <Paper id="monthTypo" variant="elevation" align="center">One Month</Paper>
                         <CurrGraph data={graphData} secondaryCurrency={secondaryCurrencies[0]}/>
+                        <Paper id="yearTypo" variant="elevation" align="center">One Year</Paper>
+                        <CurrGraph data={yearGraphData} secondaryCurrency={secondaryCurrencies[0]} />
+                        <Paper id="tenYearTypo" variant="elevation" align="center">Ten Years</Paper>
+                        <CurrGraph data={tenYearGraphData} secondaryCurrency={secondaryCurrencies[0]} />
                     </Grid>
                 </Grid>
                 {/* <Footer /> */}

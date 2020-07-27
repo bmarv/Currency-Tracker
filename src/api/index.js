@@ -2,6 +2,10 @@ import axios from 'axios'
 
 const url = 'https://api.ratesapi.io/api/latest?'
 
+/**
+ * fetches Currenct Rates for selected Base Currency
+ * @param {base Currency} selectedCurr 
+ */
 export const fetchCurrencies = async (selectedCurr) =>{
     let currUrl = ""
     selectedCurr 
@@ -22,8 +26,11 @@ export const fetchCurrencies = async (selectedCurr) =>{
     }
 }
 
-/** 
- * fetch historical data for base and timestamp
+/**
+ * fetches historical data for base and timestamp
+ * @param {specific date} dateUser 
+ * @param {specific base Currency} baseUser 
+ * @param {specific secondary Currency} secCurrUser 
  */
 export const fetchHistoricalCurr =async (dateUser, baseUser, secCurrUser) =>{
     let currUrl = 'https://api.ratesapi.io/api/'+dateUser+'?base='+baseUser+'&symbols='+secCurrUser
@@ -36,9 +43,14 @@ export const fetchHistoricalCurr =async (dateUser, baseUser, secCurrUser) =>{
 }
 
 /**
- * fetch daily data for a month
+ * processes the historical Data depending on the parameter month, year or tenYears
+ * invokes fetchHistoricalCurr function for API calls
+ * @param {String format for "month", "year", "tenYears"} histFormat 
+ * @param {Date format 'YYYY-MM-DD'} date 
+ * @param {Base Currency} base 
+ * @param {Secondary Currency besides USD, EUR, JPY, GBP} secCurr 
  */
-export const histMonthData = async (date, base, secCurr)=>{
+const processHistData = async (histFormat, date, base, secCurr)=>{
     // additional currencies for comparison
     var addCurr = ["USD","EUR","JPY","GBP"]
     for (var curr in addCurr){
@@ -46,25 +58,61 @@ export const histMonthData = async (date, base, secCurr)=>{
             secCurr = secCurr+","+addCurr[curr]
         }
     }
-    var monthlyData = {}
+    var histData = {}
     let currDate = new Date(date)
-    var currRates, loadDate
-    for(let i=0;i<30;i++){
+    var currRates, loadDate, limit
+    switch (histFormat) {
+        default :
+            limit=32
+            break;
+        case "year":
+            limit=13
+            break;
+        case "tenYears":
+            limit=11
+            break;
+    }
+    for(let i=0;i<limit;i++){
         loadDate = currDate.getFullYear()+'-'+(currDate.getMonth()+1)+'-'+currDate.getDate()
         currRates = await fetchHistoricalCurr(loadDate, base, secCurr)
         // map data for currency
         for (curr in currRates){
-            if (monthlyData[curr]=== undefined){
-                monthlyData[curr]={}
-                monthlyData[curr][0] = {histDate: loadDate, rate: currRates[curr]}
+            if (histData[curr]=== undefined){
+                histData[curr]={}
+                histData[curr][0] = {histDate: loadDate, rate: currRates[curr]}
             }   else{
-                monthlyData[curr][Object.keys(monthlyData[curr]).length] = {histDate: loadDate, rate: currRates[curr]}
+                histData[curr][Object.keys(histData[curr]).length] = {histDate: loadDate, rate: currRates[curr]}
             }
         }
-        currDate.setDate(currDate.getDate()-1)
+        switch (histFormat) {
+            default :
+                currDate.setDate(currDate.getDate()-1)
+                break;
+            case "year":
+                currDate.setMonth(currDate.getMonth()-1)
+                break;                    
+            case "tenYears":
+                currDate.setFullYear(currDate.getFullYear()-1)
+                break;
+        }
     }
-    return monthlyData
+    return histData
 }
+/**
+ * fetches daily data for a month, a year or 10 years
+ */
+export const histMonthData = async (date, base, secCurr)=>{
+    return processHistData("month", date,base,secCurr)
+}
+
+export const histYearData = async(date, base, secCurr)=>{
+    return processHistData("year", date,base,secCurr)
+}
+
+export const hist10YearData = async(date, base, secCurr)=>{
+    return processHistData("tenYears", date,base,secCurr)
+}
+
 
 /**
  * 
@@ -92,7 +140,10 @@ export const currencyPercentage = async(percDate, percBase, percSecCurr)=> {
     }
     return percentage
 }
-
+/**
+ * API-calls for Rates
+ * @param {api-url} url 
+ */
 export const callRates= async(url)=> {
     try{
         var {data: {rates}} = await axios.get(url)
